@@ -1,0 +1,37 @@
+  <section class="toolbar"><div class="filter-tabs" role="tablist" aria-label="Filter tasks"><button class="filter-tab active" data-filter="all">All tasks</button><button class="filter-tab" data-filter="todo">Pending</button><button class="filter-tab" data-filter="in_progress">In progress</button><button class="filter-tab" data-filter="done">Completed</button></div><label class="search"><span>⌕</span><input id="search-input" type="search" placeholder="Search tasks..." aria-label="Search tasks"></label></section>
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>Taskroom | Focused work</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="Taskroom home"><span class="brand-mark">+</span><span>taskroom</span></a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a class="nav-link active" href="#board"><span class="nav-icon">▦</span> My workspace</a>
+        <a class="nav-link" href="#today"><span class="nav-icon">◷</span> Today <span class="nav-count" id="today-count">0</span></a>
+        <a class="nav-link" href="#completed"><span class="nav-icon">✓</span> Completed</a>
+      </nav>
+      <div class="sidebar-footer"><div class="profile-dot">{{ request.user.username|first|upper }}</div><div><strong>{{ request.user.get_full_name|default:request.user.username }}</strong><small>Personal workspace</small></div><form method="post" action="{% url 'logout' %}"><button class="icon-button" type="submit" aria-label="Sign out">↪</button>{% csrf_token %}</form></div>
+    </aside>
+    <main class="main-content" id="board">
+      <header class="topbar"><div><p class="eyebrow">{{ current_date }}</p><h1>{{ greeting }}, {{ request.user.username }}<span class="accent">.</span></h1></div><button class="primary-button" id="new-task"><span>+</span> New task</button></header>
+      <section class="summary-row" aria-label="Task overview"><div><span class="summary-number" id="total-count">0</span><span class="summary-label">total tasks</span></div><div class="summary-divider"></div><div><span class="summary-number" id="done-count">0</span><span class="summary-label">completed</span></div><div class="progress-track"><span id="progress-bar"></span></div><span class="progress-label" id="progress-label">0% done</span></section>
+      <section class="toolbar"><div class="filter-tabs" role="tablist" aria-label="Filter tasks"><button class="filter-tab active" data-filter="all">All tasks</button><button class="filter-tab" data-filter="todo">To do</button><button class="filter-tab" data-filter="in_progress">In progress</button><button class="filter-tab" data-filter="done">Done</button></div><label class="search"><span>⌕</span><input id="search-input" type="search" placeholder="Search tasks..." aria-label="Search tasks"></label></section>
+      <section class="task-grid" id="task-grid" aria-live="polite"></section>
+      <div class="empty-state hidden" id="empty-state"><div class="empty-mark">✦</div><h2>No tasks here yet</h2><p>Create a task to give your day some shape.</p><button class="secondary-button" id="empty-new-task">Add a task</button></div>
+    </main>
+  </div>
+  <dialog id="task-dialog"><form method="dialog" id="task-form"><div class="dialog-header"><div><p class="eyebrow">Workspace task</p><h2 id="dialog-title">New task</h2></div><button class="close-button" type="button" id="close-dialog" aria-label="Close dialog">×</button></div><label>Task title<input name="title" id="task-title" maxlength="160" required placeholder="What needs your attention?"></label><label>Details<textarea name="description" id="task-description" rows="3" placeholder="Add a little context..."></textarea></label><div class="form-row"><label>Status<select name="status" id="task-status"><option value="todo">To do</option><option value="in_progress">In progress</option><option value="done">Done</option></select></label><label>Priority<select name="priority" id="task-priority"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></label></div><label>Due date<input name="due_date" id="task-due-date" type="date"></label><div class="dialog-actions"><button class="secondary-button" type="button" id="cancel-task">Cancel</button><button class="primary-button" id="save-task" value="default">Save task</button></div></form></dialog>
+  <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>
